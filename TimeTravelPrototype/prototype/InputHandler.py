@@ -25,6 +25,7 @@ class InputHandler:
 
 
 
+
     def handle_keyboard(self, event):
         char = event.char
 
