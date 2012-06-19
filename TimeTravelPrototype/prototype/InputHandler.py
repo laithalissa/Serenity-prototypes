@@ -16,7 +16,7 @@ class InputHandler:
 
     def gotASlider(self,event):
         val = int(str(event))
-        print "slider change %s" % val
+        self.world.changeTimeTo(val)
 
     def handle_keyboard(self, event):
         char = event.char

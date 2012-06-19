@@ -23,6 +23,13 @@ class TimeLine:
         # TODO accept inputs
         self.times.append(self.getCurrentTimeState().generateNextTime())
 
+    def goToTime(self, time):
+        print "changing the time, %d, %d" % (time, self.getTimeNumeric())
+        if time - 1 == self.getTimeNumeric():
+            self.incrementTime()
+            print "incrementing"
+
+
 
     def getCurrentState(self):
         time = self.getCurrentTimeState()

@@ -38,7 +38,7 @@ class World:
         self.timeLine.incrementTime()
 
     def changeTimeTo(self, time):
-        pass
+        self.timeLine.goToTime(time)
 
 
     def getSoldiers(self):
