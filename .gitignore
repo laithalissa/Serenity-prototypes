@@ -12,6 +12,7 @@ var
 sdist
 develop-eggs
 .installed.cfg
+*.swp
 
 # Installer logs
 pip-log.txt
@@ -33,10 +34,17 @@ cabal-dev
 *.chi
 *.chs.h
 
-# DS_Store
-.DS_Store
-
 #IDE-IDEA Intellij
 *.ipr
 *.iml
 *.iws
+
+# Filesystem shiz
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
