@@ -3,24 +3,27 @@ __author__ = 'joseph'
 class InputHandler:
 
     charToName  = {" ": "space"}
-    lastClicked = None
+
 
     def __init__(self, world, window):
         self. world = world
         self.window = window
 
+        self.lastClicked = None
+
+
         self.window.root.bind("<Key>", self.handle_keyboard)
         self.window.canvas.bind("<Button-1>", self.click)
-        self.window.timeSlider.config(command=self.gotASlider)
-        self.window.timeSlider.bind("<Button-1>",self.timeSliderClick)
+
+        self.window.timeSlider.bind("<B1-Motion>",self.timeSliderClick)
+
 
 
     def timeSliderClick(self, event):
-        print "slider clicked"
+        self.timeSliderClicked = True
+        self.world.changeTimeTo(self.window.timeSlider.get())
 
-    def gotASlider(self,event):
-        val = int(str(event))
-        self.world.changeTimeTo(val)
+
 
     def handle_keyboard(self, event):
         char = event.char
@@ -52,7 +55,8 @@ class InputHandler:
         location = (vx + viewPortX, vy + viewPortY)
 
         if self.lastClicked == None:
-            self.lastClicked = location
+            if location in self.world.timeLine.getCurrentState()[0]:
+                self.lastClicked = location
         else:
             self.world.order(self.lastClicked, location)
             self.lastClicked = None

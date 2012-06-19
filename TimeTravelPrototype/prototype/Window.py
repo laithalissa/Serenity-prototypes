@@ -4,7 +4,7 @@ from game.Map import Map
 
 class Window:
 
-    ups = 1
+    ups = 5
     player1_color = "blue"
     player2_color = "red"
     background_color = "green"
@@ -58,10 +58,18 @@ class Window:
 
     def update(self):
         """updates world and refreshes graphics"""
+
         if self.state == self.RUNNING:
-            self.timeSlider.set(self.timeSlider.get()+1)
+            self.world.update()
         self.draw()
+        self.updateGUI()
         self.root.after(self.updateTime, self.update)
+
+    def updateGUI(self):
+        self.timeSlider.config(to=self.world.timeLine.MAX_TIME)
+        self.timeSlider.set(self.world.timeLine.getTimeNumeric())
+
+
 
     def draw(self):
         """draws the world's current time"""

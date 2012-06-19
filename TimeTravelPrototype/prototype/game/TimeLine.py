@@ -22,6 +22,7 @@ class TimeLine:
     def incrementTime(self):
         # TODO accept inputs
         self.times.append(self.getCurrentTimeState().generateNextTime())
+        self.timeLimitCheck()
 
     def goToTime(self, time):
 
@@ -36,6 +37,14 @@ class TimeLine:
             self.times = self.times[:diff]
             diff = 0
 
+        self.timeLimitCheck()
+
+
+
+    def timeLimitCheck(self):
+        # updates the maximum value of the time-line if the current time approaches
+        if self.MAX_TIME * 0.8 < self.getTimeNumeric():
+            self.MAX_TIME *= 1.2
 
     def getCurrentState(self):
         time = self.getCurrentTimeState()
