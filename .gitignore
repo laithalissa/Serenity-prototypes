@@ -35,3 +35,8 @@ cabal-dev
 
 # DS_Store
 .DS_Store
+
+#IDE-IDEA Intellij
+*.ipr
+*.iml
+*.iws
