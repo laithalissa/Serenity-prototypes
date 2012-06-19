@@ -25,3 +25,13 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#Haskell stuff
+cabal-dev
+*.o
+*.hi
+*.chi
+*.chs.h
+
+# DS_Store
+.DS_Store
