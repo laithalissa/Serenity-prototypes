@@ -1,14 +1,16 @@
 __author__ = 'joseph'
 
 class Order:
+    """an order given to a soldier"""
 
-    def __init__(self, soldier, startLocation, finishLocation):
+    def __init__(self, soldier, startLocation, finishLocation,**args):
+        print args
         self.soldier = soldier
-        self.location = startLocation
+        self.location = args["location"] if "location" in args else startLocation
         self.startLocation = startLocation
         self.finishLocation = finishLocation
-        self.steps = self.route()
-        self.attack = 1 == self.distance(startLocation, finishLocation)
+        self.steps = args["steps"] if "steps" in args else self.route()
+        self.attack = args["attack"] if "attack" in args else (1 == self.distance(startLocation, finishLocation))
 
 
     def route(self):
@@ -52,7 +54,7 @@ class Order:
 
 
     def copy(self):
-        return Order(self.soldier.copy(), self.currentLocation(), self.finishLocation)
+        return Order(self.soldier.copy(), self.startLocation, self.finishLocation, location=self.location, steps=list(self.steps), attack=self.attack)
 
     def __repr__(self):
         return str(self)
