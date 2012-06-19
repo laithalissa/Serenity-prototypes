@@ -42,6 +42,8 @@ class Window:
 
         self.draw()
 
+        self.viewPort = (1, 1, self.world.map.width, self.world.map.height)
+
     def initMenu(self):
         self.menuBar = Menu(self.root)
         self.root.config(menu=self.menuBar)

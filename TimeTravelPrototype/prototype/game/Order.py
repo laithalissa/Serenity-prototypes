@@ -15,16 +15,16 @@ class Order:
         sx, sy = self.startLocation
         fx, fy = self.finishLocation
         diffX, diffY = fx - sx, fy - sy
-        xUnit = diffX / abs(diffX) if diffX > 0 else 0
-        yUnit = diffY / abs(diffY) if diffY > 0 else 0
+        xUnit = diffX / abs(diffX) if diffX != 0 else 0
+        yUnit = diffY / abs(diffY) if diffY != 0 else 0
 
         steps = []
-        while diffX > 0 or diffY > 0:
-            if diffX > 0:
-                diffX-= 1
+        while diffX != 0 or diffY != 0:
+            if diffX != 0:
+                diffX-= xUnit
                 steps.append((xUnit, 0))
-            if diffY > 0:
-                diffY -= 1
+            if diffY != 0:
+                diffY -= yUnit
                 steps.append((0, yUnit))
         return steps
 

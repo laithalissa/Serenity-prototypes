@@ -59,8 +59,6 @@ class Time:
 
 
 
-
-
                 # another soldier is at the next location, cancel order
                 # friendly soldier
                 elif nextSoldiers[nextLocation].player == nextSoldier.player:

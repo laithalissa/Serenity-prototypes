@@ -8,7 +8,7 @@ from game.Map import Map
 class Prototype:
 
     def __init__(self):
-        self.map = Map(Map.SMALL)
+        self.map = Map(Map.MEDIUM)
         self.world = World(self.map)
         self.window = Window(self.world)
         self.inputHandler = InputHandler(self.world, self.window)
