@@ -12,7 +12,11 @@ class InputHandler:
         self.window.root.bind("<Key>", self.handle_keyboard)
         self.window.canvas.bind("<Button-1>", self.click)
         self.window.timeSlider.config(command=self.gotASlider)
+        self.window.timeSlider.bind("<Button-1>",self.timeSliderClick)
 
+
+    def timeSliderClick(self, event):
+        print "slider clicked"
 
     def gotASlider(self,event):
         val = int(str(event))
@@ -30,6 +34,7 @@ class InputHandler:
         self.window.state = self.window.RUNNING if self.window.state == self.window.STOPPED else self.window.STOPPED
 
     def click(self, event):
+        print "click"
         x, y = event.x, event.y
         frameWidth = self.window.canvas.winfo_width()
         frameHeight = self.window.canvas.winfo_height()

@@ -14,10 +14,6 @@ class Window:
 
 
 
-    @staticmethod
-    def doer():
-        print "clicked"
-
     def __init__(self, world):
         self.world = world
 
@@ -49,7 +45,6 @@ class Window:
         self.root.config(menu=self.menuBar)
 
         fileMenu = Menu(self.menuBar, tearoff=0)
-        fileMenu.add_command(label="Open", command = Window.doer)
         self.menuBar.add_command(label="Exit", command=exit)
         self.menuBar.add_cascade(label="File", menu=fileMenu)
 
@@ -64,9 +59,7 @@ class Window:
     def update(self):
         """updates world and refreshes graphics"""
         if self.state == self.RUNNING:
-            print self.timeSlider.get()
             self.timeSlider.set(self.timeSlider.get()+1)
-            print self.timeSlider.get()
         self.draw()
         self.root.after(self.updateTime, self.update)
 

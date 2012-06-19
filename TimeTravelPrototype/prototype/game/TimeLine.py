@@ -24,26 +24,17 @@ class TimeLine:
         self.times.append(self.getCurrentTimeState().generateNextTime())
 
     def goToTime(self, time):
-        print "changing the time, %d, %d" % (time, self.getTimeNumeric())
 
         diff = time - self.getTimeNumeric()
 
         if diff > 0:
-            print "future mode"
             while diff > 0:
                 self.incrementTime()
                 diff-=1
 
         elif diff < 0:
-            print "past mode"
             self.times = self.times[:diff]
             diff = 0
-
-        else:
-            print "no time change"
-
-
-
 
 
     def getCurrentState(self):
