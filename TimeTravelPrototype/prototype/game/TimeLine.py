@@ -6,7 +6,7 @@ from Time import Time
 class TimeLine:
 
     MIN_TIME = 1
-    MAX_TIME = 1000
+    MAX_TIME = 100
 
 
     def __init__(self, map):
@@ -25,9 +25,24 @@ class TimeLine:
 
     def goToTime(self, time):
         print "changing the time, %d, %d" % (time, self.getTimeNumeric())
-        if time - 1 == self.getTimeNumeric():
-            self.incrementTime()
-            print "incrementing"
+
+        diff = time - self.getTimeNumeric()
+
+        if diff > 0:
+            print "future mode"
+            while diff > 0:
+                self.incrementTime()
+                diff-=1
+
+        elif diff < 0:
+            print "past mode"
+            self.times = self.times[:diff]
+            diff = 0
+
+        else:
+            print "no time change"
+
+
 
 
 

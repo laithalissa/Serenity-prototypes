@@ -4,7 +4,7 @@ from game.Map import Map
 
 class Window:
 
-    ups = 5
+    ups = 1
     player1_color = "blue"
     player2_color = "red"
     background_color = "green"
