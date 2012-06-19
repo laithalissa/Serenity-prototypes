@@ -11,6 +11,12 @@ class InputHandler:
 
         self.window.root.bind("<Key>", self.handle_keyboard)
         self.window.canvas.bind("<Button-1>", self.click)
+        self.window.timeSlider.config(command=self.gotASlider)
+
+
+    def gotASlider(self,event):
+        val = int(str(event))
+        print "slider change %s" % val
 
     def handle_keyboard(self, event):
         char = event.char

@@ -69,6 +69,7 @@ class Time:
 
                 # enemy soldier and can attack
                 elif nextSoldiers[nextLocation].player != nextSoldier.player and nextOrder.attack:
+
                     enemy = nextSoldiers[nextLocation]
                     enemy.health -= nextSoldier.damage
                     if enemy.health <= 0:
@@ -82,11 +83,11 @@ class Time:
 
                     else:
                         # soldier stays put
-                            if (x,y) in nextSoldiers:
-                                raise Exception("bug in design, another soldier taken existing soldier's place")
-                            else:
-                                nextSoldiers[(x,y)] = nextSoldier
-                                nextOrders[nextSoldier.id] = nextOrder
+                        if (x,y) in nextSoldiers:
+                            raise Exception("bug in design, another soldier taken existing soldier's place")
+                        else:
+                            nextSoldiers[(x,y)] = nextSoldier
+                            nextOrders[nextSoldier.id] = nextOrder
 
                 # enemy soldier and can't attack
                 elif nextSoldiers[nextLocation].player != nextSoldier.player and not nextOrder.attack:

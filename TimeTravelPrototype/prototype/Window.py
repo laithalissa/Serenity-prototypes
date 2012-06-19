@@ -64,13 +64,11 @@ class Window:
     def update(self):
         """updates world and refreshes graphics"""
         if self.state == self.RUNNING:
-            self.world.update()
+            print self.timeSlider.get()
+            self.timeSlider.set(self.timeSlider.get()+1)
+            print self.timeSlider.get()
         self.draw()
-        self.updateGUI()
         self.root.after(self.updateTime, self.update)
-
-    def updateGUI(self):
-        self.timeSlider.set(self.world.timeLine.getTimeNumeric())
 
     def draw(self):
         """draws the world's current time"""
@@ -94,6 +92,6 @@ class Window:
 
     def start(self):
         """starts the update loop and tkinter's mainloop"""
-        #self.state = self.RUNNING
+        self.state = self.RUNNING
         self.root.after(self.updateTime, self.update)
         self.root.mainloop()
