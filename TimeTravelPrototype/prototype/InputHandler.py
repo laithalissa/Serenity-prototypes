@@ -37,6 +37,18 @@ class InputHandler:
     def handle_space(self):
         self.window.state = self.window.RUNNING if self.window.state == self.window.STOPPED else self.window.STOPPED
 
+    def handle_d(self):
+        self.window.state = self.window.STOPPED
+        self.world.update()
+        self.window.draw()
+        self.window.updateGUI()
+
+    def handle_a(self):
+        self.window.state = self.window.STOPPED
+        self.world.changeTimeTo(self.world.timeLine.getTimeNumeric()-1)
+        self.window.draw()
+        self.window.updateGUI()
+
     def click(self, event):
         x, y = event.x, event.y
         frameWidth = self.window.canvas.winfo_width()

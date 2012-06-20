@@ -58,7 +58,6 @@ class Window:
 
     def update(self):
         """updates world and refreshes graphics"""
-
         if self.state == self.RUNNING:
             self.world.update()
         self.draw()
@@ -93,6 +92,6 @@ class Window:
 
     def start(self):
         """starts the update loop and tkinter's mainloop"""
-        self.state = self.RUNNING
+        #self.state = self.RUNNING
         self.root.after(self.updateTime, self.update)
         self.root.mainloop()

@@ -8,6 +8,8 @@ class TimeLine:
     MIN_TIME = 1
     MAX_TIME = 100
 
+    KEEP_FUTURE_ORDERS = False
+
 
     def __init__(self, map):
         self.map = map
