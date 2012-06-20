@@ -19,11 +19,17 @@ class World:
 
     def order(self, startLocation, finishLocation):
 
-        #validation
+        #checks both locations are not the same
+        if startLocation == finishLocation:
+            print "ordered to same location"
+            return
+
+        # checks first startLocation has a soldier
         if startLocation not in self.timeLine.getCurrentState()[0]:
             print "no soldier at %s" % str(startLocation)
             return
 
+        # checks both locations are within the world boundary
         if not self.locationInWorld(startLocation) or not self.locationInWorld(finishLocation):
             print "location not in world"
             return
@@ -35,7 +41,7 @@ class World:
 
 
     def update(self):
-        self.timeLine.incrementTime()
+        self.timeLine.goToTime(self.timeLine.getTimeNumeric()+1)
 
     def changeTimeTo(self, time):
         self.timeLine.goToTime(time)

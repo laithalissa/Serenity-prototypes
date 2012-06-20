@@ -21,18 +21,13 @@ class TimeLine:
 
         self.times = [Time(self.MIN_TIME, soldiers, dict())]
 
-    def incrementTime(self):
-        # TODO accept inputs
-        self.times.append(self.getCurrentTimeState().generateNextTime())
-        self.timeLimitCheck()
-
     def goToTime(self, time):
 
         diff = time - self.getTimeNumeric()
 
         if diff > 0:
             while diff > 0:
-                self.incrementTime()
+                self.times.append(self.getCurrentTimeState().generateNextTime())
                 diff-=1
 
         elif diff < 0:
