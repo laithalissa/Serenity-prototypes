@@ -38,7 +38,6 @@ class InputHandler:
         self.window.state = self.window.RUNNING if self.window.state == self.window.STOPPED else self.window.STOPPED
 
     def click(self, event):
-        print "click"
         x, y = event.x, event.y
         frameWidth = self.window.canvas.winfo_width()
         frameHeight = self.window.canvas.winfo_height()

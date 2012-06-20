@@ -2,10 +2,13 @@ __author__ = 'joseph'
 
 class Soldier:
 
+    MAX_HEALTH = 100
+    MIN_HEALTH = 1
+
     def __init__(self, player):
         self.player = player
         self.id = 0
-        self.health = 100
+        self.health = Soldier.MAX_HEALTH
         self.damage = 50
 
 

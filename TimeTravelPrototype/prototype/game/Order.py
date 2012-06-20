@@ -4,7 +4,6 @@ class Order:
     """an order given to a soldier"""
 
     def __init__(self, soldier, startLocation, finishLocation,**args):
-        print args
         self.soldier = soldier
         self.location = args["location"] if "location" in args else startLocation
         self.startLocation = startLocation

@@ -1,6 +1,10 @@
+from prototype.game.Soldier import Soldier
+
 __author__ = 'joseph'
 
 class Time:
+
+    SOLDIER_KEEP_ATTACKING_UNTIL_VICTORY = False
 
     def __init__(self,time, soldiers, orders):
         self.time = time
@@ -72,7 +76,8 @@ class Time:
 
                     enemy = nextSoldiers[nextLocation]
                     enemy.health -= nextSoldier.damage
-                    if enemy.health <= 0:
+                    print "enemy at %s belonging to %d has %d health" % (str(nextLocation),enemy.player, enemy.health)
+                    if enemy.health < Soldier.MIN_HEALTH:
                         del nextSoldiers[nextLocation]
                         if enemy.id in nextOrders:
                             del nextOrders[enemy.id]
@@ -87,7 +92,8 @@ class Time:
                             raise Exception("bug in design, another soldier taken existing soldier's place")
                         else:
                             nextSoldiers[(x,y)] = nextSoldier
-                            nextOrders[nextSoldier.id] = nextOrder
+                            if self.SOLDIER_KEEP_ATTACKING_UNTIL_VICTORY:
+                                nextOrders[nextSoldier.id] = nextOrder
 
                 # enemy soldier and can't attack
                 elif nextSoldiers[nextLocation].player != nextSoldier.player and not nextOrder.attack:
