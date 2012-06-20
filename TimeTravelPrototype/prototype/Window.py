@@ -22,7 +22,7 @@ class Window:
         #self.updateTime = 3000
         self.root = Tk()
         self.root.config(borderwidth=0)
-        self.root.wm_title("Prototype 1")
+        self.root.wm_title("Siddall's Prototype 1")
 
         self.frame = Frame(self.root, width=500, height=700, background="white")
         self.frame.pack()
