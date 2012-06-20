@@ -13,6 +13,7 @@ class Time:
         self.additionalOrders = []
 
 
+    # could be refactored into multiple methods, one for each scenario
     def generateNextTime(self):
         """ generates the next time
         additionalOrders are new orders the user has specified.
@@ -22,88 +23,81 @@ class Time:
         if soldier is ordered to adjacent square with enemy, soldier attacks enemy.
         if soldier is ordered to adjacent square with friendly soldier, order cancelled.
         """
-        additionalOrders = dict((order.soldier.id, order) for order in self.additionalOrders)
+        orders = dict((order.soldier.id, order.copy()) for order in self.additionalOrders)
         self.additionalOrders = []
+        for id,order in self.orders.items():
+            if id not in orders:
+                orders[id] = order.copy()
+
 
         nextSoldiers = dict()
         nextOrders = dict()
-        for (x,y), soldier in self.soldiers.items():
-            order = None
-            if soldier.id in additionalOrders:
-                order = additionalOrders[soldier.id]
-            elif soldier.id in self.orders:
-                order = self.orders[soldier.id]
 
 
-            if order == None:
-                nextSoldiers[(x,y)] = soldier.copy()
-            # assumes no orders are finished
-            else:
-                """
-                    if next square empty => move to next square
-                    if next square contains ally => cancel order
-                    if next square contains enemy and can attack => attack
-                    if next square contains enemy and can't attack => cancel order
-                """
+        soldiersWithoutOrders = [(loc,soldier.copy()) for loc,soldier in self.soldiers.items() if soldier.id not in orders]
+        soldiersWithOrders = [(loc,soldier.copy(),orders[soldier.id].copy()) for loc,soldier in self.soldiers.items() if soldier.id in orders]
 
-                # integrity check
-                if order.soldier.id != soldier.id:
-                    raise Exception("illegal state")
+        # adds all soldiers that don't have orders first
+        for (x,y), soldier in soldiersWithoutOrders:
+            nextSoldiers[(x,y)] = soldier
 
-                nextLocation = order.nextLocation()
-                nextSoldier = soldier.copy()
-                nextOrder = order.copy()
+        for (x,y), soldier, order in soldiersWithOrders:
 
-                # can move freely
-                if nextLocation not in nextSoldiers:
-                    nextOrder.move()
-                    nextSoldiers[(nextLocation)] = nextSoldier
-                    if not nextOrder.finished():
-                        nextOrders[nextSoldier.id] = nextOrder
+            """
+                if next square empty => move to next square
+                if next square contains ally => cancel order
+                if next square contains enemy and can attack => attack
+                if next square contains enemy and can't attack => cancel order
+            """
 
+            nextLocation = order.nextLocation()
 
+            # can move freely
+            if nextLocation not in nextSoldiers:
+                order.move()
+                nextSoldiers[nextLocation] = soldier
+                if not order.finished():
+                    nextOrders[soldier.id] = order
 
-                # another soldier is at the next location, cancel order
-                # friendly soldier
-                elif nextSoldiers[nextLocation].player == nextSoldier.player:
-                    if (x,y) in nextSoldiers:
-                        raise Exception("bug in design, another soldier taken existing soldier's place")
-                    else:
-                        nextSoldiers[(x,y)] = nextSoldier
-
-                # enemy soldier and can attack
-                elif nextSoldiers[nextLocation].player != nextSoldier.player and nextOrder.attack:
-
-                    enemy = nextSoldiers[nextLocation]
-                    enemy.health -= nextSoldier.damage
-                    print "enemy at %s belonging to %d has %d health" % (str(nextLocation),enemy.player, enemy.health)
-                    if enemy.health < Soldier.MIN_HEALTH:
-                        del nextSoldiers[nextLocation]
-                        if enemy.id in nextOrders:
-                            del nextOrders[enemy.id]
-                        nextSoldiers[nextLocation] = nextSoldier
-                        nextOrder.move()
-                        if not nextOrder.finished():
-                            nextOrders[nextSoldier.id] = nextOrder
-
-                    else:
-                        # soldier stays put
-                        if (x,y) in nextSoldiers:
-                            raise Exception("bug in design, another soldier taken existing soldier's place")
-                        else:
-                            nextSoldiers[(x,y)] = nextSoldier
-                            if self.SOLDIER_KEEP_ATTACKING_UNTIL_VICTORY:
-                                nextOrders[nextSoldier.id] = nextOrder
-
-                # enemy soldier and can't attack
-                elif nextSoldiers[nextLocation].player != nextSoldier.player and not nextOrder.attack:
-                    if (x,y) in nextSoldiers:
-                        raise Exception("bug in design, another soldier taken existing soldier's place")
-                    else:
-                        nextSoldiers[(x,y)] = nextSoldier
-
+            # friendly soldier
+            elif nextSoldiers[nextLocation].player == soldier.player:
+                print "friendly at %s" % str(nextLocation)
+                if (x,y) in nextSoldiers:
+                    raise Exception("bug in design, another soldier taken existing soldier's place")
                 else:
-                    raise Exception("illegal state")
+                    nextSoldiers[(x,y)] = soldier
+
+            # enemy soldier and can attack
+            elif nextSoldiers[nextLocation].player != soldier.player and order.attack:
+                enemy = nextSoldiers[nextLocation]
+                enemy.health -= soldier.damage
+                print "enemy at %s belonging to %d has %d health" % (str(nextLocation),enemy.player, enemy.health)
+                if enemy.health < enemy.MIN_HEALTH:
+                    del nextSoldiers[nextLocation]
+                    if enemy.id in nextOrders:
+                        del nextOrders[enemy.id]
+                    nextSoldiers[nextLocation] = soldier
+                    order.move()
+                    if not order.finished():
+                        nextOrders[soldier.id] = order
+                else:
+                    # soldier stays put
+                    if (x,y) in nextSoldiers:
+                        raise Exception("bug in design, another soldier taken existing soldier's place")
+                    else:
+                        nextSoldiers[(x,y)] = soldier
+                        if self.SOLDIER_KEEP_ATTACKING_UNTIL_VICTORY:
+                            nextOrders[soldier.id] = order
+
+            # enemy soldier and can't attack
+            elif nextSoldiers[nextLocation].player != soldier.player and not order.attack:
+                if (x,y) in nextSoldiers:
+                    raise Exception("bug in design, another soldier taken existing soldier's place")
+                else:
+                    nextSoldiers[(x,y)] = soldier
+
+            else:
+                raise Exception("illegal state")
 
         t = Time(self.time+1, nextSoldiers, nextOrders)
         return t
