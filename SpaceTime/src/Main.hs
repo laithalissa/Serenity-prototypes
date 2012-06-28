@@ -5,10 +5,7 @@ where
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
-import Text.ParserCombinators.Parsec
-import Data.Array
 import Control.DeepSeq
-import Data.Map (Map)
 import qualified Data.Map as Map
 
 import World
