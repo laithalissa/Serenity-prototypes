@@ -138,9 +138,9 @@ widget_at widgets (x,y) = case filter (inside (x, y)) widgets of
 -- Handle control events
 events :: Int -> Event -> World -> IO World
 events s_max event @ (EventKey key state (Modifiers Up Up Up) (x,y)) world @ World {time=t, slice=sl, evolving = e}
-	| key == control_left && state   == Up  = return $ world { slice = mod (sl-1) s_max }
-	| key == control_right && state  == Up  = return $ world { slice = mod (sl+1) s_max }
-	| key == control_evolve && state == Up  = return $ world { evolving = not e }
+	| key == control_left  = if state == Up then return $ world { evolving = Static } else return $ world { evolving = Devolving }
+	| key == control_right = if state == Up then return $ world { evolving = Static } else return $ world { evolving = Evolving  }
+	| key == control_evolve && state == Up = return $ world { evolving = if e == Evolving then Static else Evolving }
 	| key == (MouseButton LeftButton) = mouse world event
 	-- | key == (MouseButton LeftButton) && state == Up   = return $ click x y (world {mouse_l_down = False})
 	-- | key == (MouseButton LeftButton) && state == Down = return $ world {mouse_l_down = True}
