@@ -38,7 +38,7 @@ empty_world = World
 	,	evolving       = Static
 	,	last_tick      = 0.0
 	,	mode           = ModeSelect
-	,	selected       = []
+	,	selected       = [1,2]
 	,	mouse_l_down   = False
 	,	mouse_coord    = (0, 0)
 	,	current_widget = Nothing
@@ -70,7 +70,7 @@ instance NFData Slice where
 instance NFData Unit where
 	rnf unit = seq (planned_path unit) ()
 
-data Mode = ModeSelect | ModeMove | ModeAttack | ModeAttackMove
+data Mode = ModeSelect | ModeMove | ModeAttack | ModeAttackMove deriving Eq
 
 data Widget = Widget -- (Float, Float) (Float, Float) (World -> IO World) (World -> IO World) (World -> IO World)
 	{	bottom_left     :: (Float, Float)

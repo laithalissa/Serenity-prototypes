@@ -34,7 +34,7 @@ main = do
 		{	c_history = force $ history start1
 		,	world_widgets = enabled_widgets
 		}
-	playIO (InWindow "Serenity Mark I" size (0,0)) black 20 start picture (events sliceMax) run where
+	playIO (InWindow "Serenity Mark I" size (0,40)) black 20 start picture (events sliceMax) run where
 		size = (xmax-xmin, ymax-ymin + 2*bottom)
 
 run :: Float -> World -> IO World
