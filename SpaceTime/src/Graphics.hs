@@ -154,8 +154,8 @@ pictureMouseLoc (x, y) =
 -- Timeline Widget
 timeline_widget :: Widget
 timeline_widget = Widget
-	{	bottom_left     = (slider_coord 0           , ymin_ + bottom_ / 2 - 2*s)
-	,	top_right       = (slider_coord (sliceMax-1), ymin_ + bottom_ / 2 - s  )
+	{	bottom_left     = (slider_coord 0           , (ymin_ + bottom_ / 2 - 2*s) - 40 )
+	,	top_right       = (slider_coord (sliceMax-1), (ymin_ + bottom_ / 2 - s  ) - 40 )
 	,	mouse_up_cb     = \_ world -> return world
 	,	mouse_down_cb   = \(EventKey _ _ _ (x,y)) world -> return world {slice = toBounds (floor $ slider_position x) (0, sliceMax-1)}
 	,	mouse_motion_cb = \(EventMotion (x, y))   world -> return world {slice = toBounds (floor $ slider_position x) (0, sliceMax-1)}
