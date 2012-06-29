@@ -3,6 +3,7 @@ module Graphics where
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import Data.Array
+import qualified Data.Map as Map
 
 import World
 import Unit
@@ -31,6 +32,8 @@ enabled_widgets =
 	[	timeline_widget
 	,	select_button
 	,	attack_button
+	,	move_button
+	,	game_area_widget
 	]
 
 -- Widget Logic
@@ -190,15 +193,28 @@ select_button = Widget
 	}
 	where active world = (mode world) == ModeSelect
 
-attack_button :: Widget
-attack_button = Widget
+move_button :: Widget
+move_button = Widget
 	{	bottom_left     = (xmin_ + 3 + 50, ymin_ - 23)
 	,	top_right       = (xmin_ + 3 + 100, ymin_ - 23 + 20)
-	,	mouse_up_cb     = \_ world -> return world {mode = ModeAttack}
+	,	mouse_up_cb     = \_ world -> return world {mode = ModeMove}
 	,	mouse_down_cb   = \(EventKey _ _ _ (x,y)) world -> return world 
 	,	mouse_motion_cb = \(EventMotion (x, y))   world -> return world 
 	,	widget_picture  = \world -> 
 			Translate (xmin_ + 53) (ymin_ - 23 ) $ 
+			picture_button "Move" (active world) world
+	}
+	where active world = (mode world) == ModeMove
+
+attack_button :: Widget
+attack_button = Widget
+	{	bottom_left     = (xmin_ + 3 + 100, ymin_ - 23)
+	,	top_right       = (xmin_ + 3 + 150, ymin_ - 23 + 20)
+	,	mouse_up_cb     = \_ world -> return world {mode = ModeAttack}
+	,	mouse_down_cb   = \(EventKey _ _ _ (x,y)) world -> return world 
+	,	mouse_motion_cb = \(EventMotion (x, y))   world -> return world 
+	,	widget_picture  = \world -> 
+			Translate (xmin_ + 103) (ymin_ - 23 ) $ 
 			picture_button "Attack" (active world) world
 	}
 	where active world = (mode world) == ModeAttack
@@ -213,6 +229,26 @@ picture_button label active world = Pictures
 		color_up = greyN 0.5
 		color_active = greyN 0.2
 		color = if active then color_down else color_up
+
+game_area_widget :: Widget
+game_area_widget = Widget
+	{	bottom_left     = (xmin_, ymin_)
+	,	top_right       = (xmax_, ymax_)
+	,	mouse_up_cb     = \(EventKey _ _ _ (x,y)) world -> return $ click (x, y) world
+	,	mouse_down_cb   = \(EventKey _ _ _ (x,y)) world -> return world 
+	,	mouse_motion_cb = \(EventMotion (x, y))   world -> return world 
+	,	widget_picture  = \_ -> Pictures []
+	} where 
+		click (x_, y_) world = case mode world of
+			ModeSelect     -> world {selected = map unit_id clicked_units}
+			ModeMove       -> world
+			ModeAttack     -> world
+			ModeAttackMove -> world
+			where 
+				clicked_units = filter (\unit -> current_loc unit == (x,y)) units_now
+				x = floor $ ((x_ - xmin_) / s) + 1
+				y = floor $ ((y_ - ymin_ - bottom_) / s) + 1
+				units_now = (\(Slice grid time) -> grid) $ (c_history world) !! (slice world)
 
 -- Controls
 control_left   :: Key
