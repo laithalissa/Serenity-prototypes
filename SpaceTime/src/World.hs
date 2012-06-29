@@ -16,7 +16,7 @@ data World = World
 	,	slice          :: Int
 	,	time           :: Float
 	,	c_history      :: [Slice]
-	,	evolving       :: Bool
+	,	evolving       :: Evolving
 	,	last_tick      :: Float
 	,	mode           :: Mode
 	,	selected       :: [UnitID]
@@ -26,6 +26,8 @@ data World = World
 	,	current_widget :: Maybe Widget
 	}
 
+data Evolving = Evolving | Devolving | Static deriving (Eq)
+
 empty_world :: World
 empty_world = World
 	{	units          = Map.empty
@@ -33,7 +35,7 @@ empty_world = World
 	,	slice          = 0
 	,	time           = 0
 	,	c_history      = []
-	,	evolving       = False
+	,	evolving       = Static
 	,	last_tick      = 0.0
 	,	mode           = ModeSelect
 	,	selected       = [1,2]

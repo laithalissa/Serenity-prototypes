@@ -39,10 +39,13 @@ main = do
 
 run :: Float -> World -> IO World
 run f (world @ World {time = t, last_tick = l_tick, evolving = evolve}) = 
-	if evolve 
-		then return $ tick_if_time
-		else return $ advance_main_time
+	if evolve == Static
+		then return $ advance_main_time
+		else return $ tick_if_time evolve
 	where
-	tick_if_time = if (l_tick + 0.1) < t then advance_main_time_and_slice else advance_main_time
+	tick_if_time e = if (l_tick + 0.1) < t then advance_main_time_and_slice e else advance_main_time
+	advance_main_time_and_slice e =
+		if e == Evolving
+			then tick_forward $ (advance_main_time) {last_tick = f+t}
+			else tick_back    $ (advance_main_time) {last_tick = f+t}
 	advance_main_time = main_time_forward f world
-	advance_main_time_and_slice = tick_forward $ (main_time_forward f world) {last_tick = f+t}
