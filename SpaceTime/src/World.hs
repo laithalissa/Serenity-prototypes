@@ -52,7 +52,7 @@ tick_forward :: World -> World
 tick_forward world @ World {slice = i} = world {slice = mod (i+1) sliceMax}
 
 tick_back :: World -> World
-tick_back world @ World {slice = i} = world {slice = i-1`mod` sliceMax}
+tick_back world @ World {slice = i} = world {slice = mod (i-1) sliceMax}
 
 main_time_forward :: Float -> World -> World
 main_time_forward f (world @ World {time = t}) = world {time = t+f}
