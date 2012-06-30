@@ -26,8 +26,6 @@ data World = World
 	,	current_widget :: Maybe Widget
 	}
 
-data Evolving = Evolving | Devolving | Static deriving (Eq)
-
 empty_world :: World
 empty_world = World
 	{	units          = Map.empty
@@ -45,17 +43,19 @@ empty_world = World
 	,	world_widgets  = []
 	}
 
-init_grid :: World -> Grid
-init_grid world = map snd (Map.toList (units world))
+data Evolving = Evolving | Devolving | Static deriving (Eq)
 
 tick_forward :: World -> World
 tick_forward world @ World {slice = i} = world {slice = mod (i+1) sliceMax}
 
 tick_back :: World -> World
-tick_back world @ World {slice = i} = world {slice = i-1`mod` sliceMax}
+tick_back world @ World {slice = i} = world {slice = mod (i-1) sliceMax}
 
 main_time_forward :: Float -> World -> World
 main_time_forward f (world @ World {time = t}) = world {time = t+f}
+
+init_grid :: World -> Grid
+init_grid world = map snd (Map.toList (units world))
 
 type Grid = [Unit]
 type Time = Int
@@ -72,7 +72,7 @@ instance NFData Unit where
 
 data Mode = ModeSelect | ModeMove | ModeAttack | ModeAttackMove deriving Eq
 
-data Widget = Widget -- (Float, Float) (Float, Float) (World -> IO World) (World -> IO World) (World -> IO World)
+data Widget = Widget
 	{	bottom_left     :: (Float, Float)
 	,	top_right       :: (Float, Float)
 	,	mouse_up_cb     :: Event -> World -> IO World

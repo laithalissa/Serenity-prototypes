@@ -3,9 +3,11 @@ module Graphics where
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import Data.Array
+import Control.DeepSeq
 import qualified Data.Map as Map
 
 import World
+import History
 import Unit
 import Configuration
 import qualified Temporal as T
@@ -21,6 +23,7 @@ picture world =
 	,	pictureGrid (gridOfSlice ((c_history world) !! (slice world))) world
 	,	pictureWidgets world
 	,	pictureMouseLoc (mouse_coord world)
+	,	pictureOrders world (slice world)
 	]
 	where
 	gridOfSlice (Slice grid _) = grid
@@ -112,7 +115,6 @@ drawOneUnit world unit ti =
 	orders_color = case (orders unit) T.! ti of
 		Nothing -> yellow
 		Just a -> case a of
-			Move _ -> orange
 			Goto _ -> orange
 			Attack _ -> red
 			AttackGoto _ -> blue
@@ -121,6 +123,26 @@ drawOneUnit world unit ti =
 		[	Color red $ Polygon [(-2,-2),(-2,s+2),(s+2,s+2),(s+2,-2)]
 		,	Color black square'
 		]
+
+pictureOrders :: World -> Time -> Picture
+pictureOrders world ti = 
+	Translate xmin_ ymin_ $ 
+	Pictures $ map 
+	(\order -> Translate (trans $ fst (orders_loc order)) (trans $ snd (orders_loc order)) $ Color (orders_color order) $ (Circle 10) ) 
+	list_orders where
+		list_orders = concatMap (\unit -> (get_orders unit)) selected_units
+		get_orders unit = case (orders unit) T.! ti of Just a -> [a]; otherwise -> []
+		units_now = (\(Slice grid time) -> grid) $ (c_history world) !! (slice world)
+		selected_units = filter (\unit -> (unit_id unit) `elem` (selected world)) units_now
+		trans a = (fromIntegral (a-1) * s ) + 0.5 * s
+		orders_color order = case order of
+			Goto _       -> orange
+			Attack _     -> red
+			AttackGoto _ -> blue
+		orders_loc order = case order of
+			Goto loc       -> loc
+			Attack loc     -> loc
+			AttackGoto loc -> loc
 
 pictureTerrain :: Terrain -> Picture
 pictureTerrain terr = 
@@ -219,7 +241,6 @@ attack_button = Widget
 	}
 	where active world = (mode world) == ModeAttack
 
-
 picture_button label active world = Pictures
 	[	Color color (Scale 5 2 (square_of_size 9))
 	,	Translate 5 3 $ Scale 0.1 0.1 $ Color black (Text label)
@@ -241,7 +262,8 @@ game_area_widget = Widget
 	} where 
 		click (x_, y_) world = case mode world of
 			ModeSelect     -> world {selected = map unit_id clicked_units}
-			ModeMove       -> world
+			ModeMove       -> world' {c_history = force $ history world', mode = ModeSelect} where 
+				world' = world {units = Map.map update_move_orders (units world)}
 			ModeAttack     -> world
 			ModeAttackMove -> world
 			where 
@@ -249,6 +271,9 @@ game_area_widget = Widget
 				x = floor $ ((x_ - xmin_) / s) + 1
 				y = floor $ ((y_ - ymin_ - bottom_) / s) + 1
 				units_now = (\(Slice grid time) -> grid) $ (c_history world) !! (slice world)
+				update_move_orders unit = if (unit_id unit) `elem` (selected world) 
+					then unit {orders = T.insert (orders unit) (slice world) (Goto (x,y))}
+					else unit
 
 -- Controls
 control_left   :: Key
