@@ -1,6 +1,6 @@
-module Unit where
+module SpaceTime.Unit where
 
-import Temporal
+import SpaceTime.Temporal
 
 type UnitID = Int
 

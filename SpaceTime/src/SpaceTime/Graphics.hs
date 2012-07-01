@@ -1,4 +1,4 @@
-module Graphics where
+module SpaceTime.Graphics where
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
@@ -6,13 +6,13 @@ import Data.Array
 import Control.DeepSeq
 import qualified Data.Map as Map
 
-import World
-import Widget
-import History
-import Unit
-import Configuration
-import qualified Temporal as T
-import Util
+import SpaceTime.World
+import SpaceTime.Widget
+import SpaceTime.History
+import SpaceTime.Unit
+import SpaceTime.Configuration
+import qualified SpaceTime.Temporal as T
+import SpaceTime.Util
 
 picture :: World -> IO Picture
 picture world = 

@@ -1,4 +1,4 @@
-module Widget (
+module SpaceTime.Widget (
 	Widget(..)
 ,	WidgetState(..)
 ,	default_widget
@@ -6,9 +6,10 @@ module Widget (
 ,	mouse_event
 ) where
 
-import Configuration
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
+
+import SpaceTime.Configuration
 
 class WidgetState world where
 	provide_widgets    :: world -> [Widget world]

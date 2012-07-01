@@ -1,4 +1,4 @@
-module History where
+module SpaceTime.History where
 
 import Data.List
 import Data.Array
@@ -7,10 +7,10 @@ import qualified Data.Set as Set
 import Data.Graph.AStar
 import Control.DeepSeq
 
-import Configuration
-import Unit
-import qualified Temporal as T
-import World
+import SpaceTime.Configuration
+import SpaceTime.Unit
+import qualified SpaceTime.Temporal as T
+import SpaceTime.World
 
 history :: World -> [Slice]
 history world = take slice_max $ iterate (step (terrain world)) init_slice where
