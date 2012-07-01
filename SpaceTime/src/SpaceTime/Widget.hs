@@ -20,7 +20,7 @@ class WidgetState world where
 	get_current_widget _   = Nothing
 	set_current_widget _ a = a
 
-data WidgetState world => Widget world = Widget
+data Widget world = Widget
 	{	bottom_left     :: (Float, Float)
 	,	top_right       :: (Float, Float)
 	,	mouse_up_cb     :: Event -> world -> IO world
