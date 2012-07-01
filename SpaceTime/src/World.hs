@@ -45,7 +45,7 @@ empty_world = World
 	}
 
 instance WidgetState World where
-	provide_widgets = world_widgets
+	provide_widgets    = world_widgets
 	get_current_widget = current_widget
 	set_current_widget widget world = world {current_widget = widget}
 
