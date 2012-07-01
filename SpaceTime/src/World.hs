@@ -9,6 +9,7 @@ import Control.DeepSeq
 
 import Configuration
 import Unit
+import Widget
 
 data World = World 
 	{	units          :: Map Int Unit
@@ -22,8 +23,8 @@ data World = World
 	,	selected       :: [UnitID]
 	,	mouse_l_down   :: Bool
 	,	mouse_coord    :: (Float, Float)
-	,	world_widgets  :: [Widget]
-	,	current_widget :: Maybe Widget
+	,	world_widgets  :: [Widget World]
+	,	current_widget :: Maybe (Widget World)
 	}
 
 empty_world :: World
@@ -42,6 +43,11 @@ empty_world = World
 	,	current_widget = Nothing
 	,	world_widgets  = []
 	}
+
+instance WidgetState World where
+	provide_widgets = world_widgets
+	get_current_widget = current_widget
+	set_current_widget widget world = world {current_widget = widget}
 
 data Evolving = Evolving | Devolving | Static deriving (Eq)
 
@@ -71,23 +77,4 @@ instance NFData Unit where
 	rnf unit = seq (planned_path unit) ()
 
 data Mode = ModeSelect | ModeMove | ModeAttack | ModeAttackMove deriving Eq
-
-data Widget = Widget
-	{	bottom_left     :: (Float, Float)
-	,	top_right       :: (Float, Float)
-	,	mouse_up_cb     :: Event -> World -> IO World
-	,	mouse_down_cb   :: Event -> World -> IO World
-	,	mouse_motion_cb :: Event -> World -> IO World
-	,	widget_picture  :: World -> Picture
-	}
-
-nothing_widget :: Widget
-nothing_widget = Widget
-	{	bottom_left     = (0,0)
-	,	top_right       = (0,0)
-	,	mouse_up_cb     = \_ world -> return world
-	,	mouse_down_cb   = \_ world -> return world
-	,	mouse_motion_cb = \_ world -> return world
-	,	widget_picture  = \_       -> Pictures []
-	}
 

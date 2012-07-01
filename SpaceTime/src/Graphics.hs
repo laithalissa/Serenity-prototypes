@@ -7,6 +7,7 @@ import Control.DeepSeq
 import qualified Data.Map as Map
 
 import World
+import Widget
 import History
 import Unit
 import Configuration
@@ -19,18 +20,18 @@ picture world =
 	Translate (0.0) ((fromIntegral bottom)) $ 
 	Pictures 
 	[	picture_grid_empties
-	,	picture_terrain (terrain world)
-	,	picture_grid (gridOfSlice ((c_history world) !! (slice world))) world
+	,	picture_terrain       (terrain world)
+	,	picture_grid          (gridOfSlice ((c_history world) !! (slice world))) world
 	,	picture_widgets world
-	,	picture_mouse_coords (mouse_coord world)
-	,	picture_orders world (slice world)
+	,	picture_mouse_coords  (mouse_coord world)
+	,	picture_orders world  (slice world)
 	]
 	where
 	gridOfSlice (Slice grid _) = grid
 
 picture_widgets world = Pictures $ map (\widget -> widget_picture widget $ world) (world_widgets world)
 
-enabled_widgets :: [Widget]
+enabled_widgets :: [Widget World]
 enabled_widgets = 
 	[	timeline_widget
 	,	select_button
@@ -39,43 +40,15 @@ enabled_widgets =
 	,	game_area_widget
 	]
 
--- Widget Logic
-mouse :: World -> Event ->  IO World
-mouse world event @ (EventKey key state (Modifiers Up Up Up) (x,y)) 
-		| key == (MouseButton LeftButton) && state == Up   = 
-			(\world -> c_widget event $ world {current_widget = Nothing }) world
-		| key == (MouseButton LeftButton) && state == Down = 
-			(\world -> down event $ world {current_widget = Just widget }) world
-	where
-		widget @ Widget {mouse_down_cb = down} = case widget_at widgets (x,y) of
-			Just w -> w
-			Nothing -> nothing_widget
-		widgets = world_widgets world
-		c_widget = case current_widget world of 
-			Just w -> mouse_up_cb w
-			Nothing -> mouse_up_cb nothing_widget
-
-mouse world event @ (EventMotion _) = move event world where
-	Widget {mouse_motion_cb = move} = case current_widget world of
-		Just w -> w
-		Nothing -> nothing_widget
-
-widget_at :: [Widget] -> (Float,Float) -> Maybe Widget
-widget_at widgets (x,y) = case filter (inside (x, y - bottom_)) (reverse widgets) of
-	(x:_) -> Just x
-	_ -> Nothing
-	where
-		inside (x, y) (Widget {bottom_left = (bx, by), top_right= (tx, ty)} ) = and [x < tx, x > bx, y < ty, y > by]
-
 -- Handle control events
 events :: Int -> Event -> World -> IO World
 events s_max event @ (EventKey key state (Modifiers Up Up Up) (x,y)) world @ World {time=t, slice=sl, evolving = e}
 	| key == control_left  = if state == Up then return $ world { evolving = Static } else return $ world { evolving = Devolving }
 	| key == control_right = if state == Up then return $ world { evolving = Static } else return $ world { evolving = Evolving  }
 	| key == control_evolve && state == Up = return $ world { evolving = if e == Evolving then Static else Evolving }
-	| key == (MouseButton LeftButton) = mouse world event
+	| key == (MouseButton LeftButton) = mouse_event event world
 events s_max event @ (EventMotion (x, y)) world @ World {time=t, slice=sl, evolving = e} =
-	mouse world' event where
+	mouse_event event world' where
 		world' = world {mouse_coord = (x,y)}
 events _ _ x = return x
 
@@ -177,7 +150,7 @@ picture_mouse_coords (x, y) =
 	]
 
 -- Timeline Widget
-timeline_widget :: Widget
+timeline_widget :: Widget World
 timeline_widget = Widget
 	{	bottom_left     = (slider_coord 0           , (ymin_ + bottom_ / 2 - 2*s) - 40 )
 	,	top_right       = (slider_coord (slice_max-1), (ymin_ + bottom_ / 2 - s  ) - 40 )
@@ -202,7 +175,7 @@ picture_timeline world =
 
 -- Button Widgets
 
-select_button :: Widget
+select_button :: Widget World
 select_button = Widget
 	{	bottom_left     = (xmin_ + 3 , ymin_ - 23)
 	,	top_right       = (xmin_ + 3 + 50, ymin_ - 23 + 20)
@@ -215,7 +188,7 @@ select_button = Widget
 	}
 	where active world = (mode world) == ModeSelect
 
-move_button :: Widget
+move_button :: Widget World
 move_button = Widget
 	{	bottom_left     = (xmin_ + 3 + 50, ymin_ - 23)
 	,	top_right       = (xmin_ + 3 + 100, ymin_ - 23 + 20)
@@ -228,7 +201,7 @@ move_button = Widget
 	}
 	where active world = (mode world) == ModeMove
 
-attack_button :: Widget
+attack_button :: Widget World
 attack_button = Widget
 	{	bottom_left     = (xmin_ + 3 + 100, ymin_ - 23)
 	,	top_right       = (xmin_ + 3 + 150, ymin_ - 23 + 20)
@@ -251,7 +224,7 @@ picture_button label active world = Pictures
 		color_active = greyN 0.2
 		color = if active then color_down else color_up
 
-game_area_widget :: Widget
+game_area_widget :: Widget World
 game_area_widget = Widget
 	{	bottom_left     = (xmin_, ymin_)
 	,	top_right       = (xmax_, ymax_)
