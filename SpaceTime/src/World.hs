@@ -9,6 +9,7 @@ import Control.DeepSeq
 
 import Configuration
 import Unit
+import Widget
 
 data World = World 
 	{	units          :: Map Int Unit
@@ -16,14 +17,14 @@ data World = World
 	,	slice          :: Int
 	,	time           :: Float
 	,	c_history      :: [Slice]
-	,	evolving       :: Evolving
+	,	evolve_mode    :: Evolving
 	,	last_tick      :: Float
 	,	mode           :: Mode
 	,	selected       :: [UnitID]
 	,	mouse_l_down   :: Bool
 	,	mouse_coord    :: (Float, Float)
-	,	world_widgets  :: [Widget]
-	,	current_widget :: Maybe Widget
+	,	world_widgets  :: [Widget World]
+	,	current_widget :: Maybe (Widget World)
 	}
 
 empty_world :: World
@@ -33,7 +34,7 @@ empty_world = World
 	,	slice          = 0
 	,	time           = 0
 	,	c_history      = []
-	,	evolving       = Static
+	,	evolve_mode    = Static
 	,	last_tick      = 0.0
 	,	mode           = ModeSelect
 	,	selected       = [1,2]
@@ -43,13 +44,18 @@ empty_world = World
 	,	world_widgets  = []
 	}
 
+instance WidgetState World where
+	provide_widgets = world_widgets
+	get_current_widget = current_widget
+	set_current_widget widget world = world {current_widget = widget}
+
 data Evolving = Evolving | Devolving | Static deriving (Eq)
 
 tick_forward :: World -> World
-tick_forward world @ World {slice = i} = world {slice = mod (i+1) sliceMax}
+tick_forward world @ World {slice = i} = world {slice = mod (i+1) slice_max}
 
 tick_back :: World -> World
-tick_back world @ World {slice = i} = world {slice = mod (i-1) sliceMax}
+tick_back world @ World {slice = i} = world {slice = mod (i-1) slice_max}
 
 main_time_forward :: Float -> World -> World
 main_time_forward f (world @ World {time = t}) = world {time = t+f}
@@ -71,23 +77,4 @@ instance NFData Unit where
 	rnf unit = seq (planned_path unit) ()
 
 data Mode = ModeSelect | ModeMove | ModeAttack | ModeAttackMove deriving Eq
-
-data Widget = Widget
-	{	bottom_left     :: (Float, Float)
-	,	top_right       :: (Float, Float)
-	,	mouse_up_cb     :: Event -> World -> IO World
-	,	mouse_down_cb   :: Event -> World -> IO World
-	,	mouse_motion_cb :: Event -> World -> IO World
-	,	widget_picture  :: World -> Picture
-	}
-
-nothing_widget :: Widget
-nothing_widget = Widget
-	{	bottom_left     = (0,0)
-	,	top_right       = (0,0)
-	,	mouse_up_cb     = \_ world -> return world
-	,	mouse_down_cb   = \_ world -> return world
-	,	mouse_motion_cb = \_ world -> return world
-	,	widget_picture  = \_       -> Pictures []
-	}
 

@@ -13,7 +13,7 @@ import qualified Temporal as T
 import World
 
 history :: World -> [Slice]
-history world = take sliceMax $ iterate (step (terrain world)) init_slice where
+history world = take slice_max $ iterate (step (terrain world)) init_slice where
 	init_slice = Slice (init_grid world) 1
 
 step :: Terrain -> Slice -> Slice

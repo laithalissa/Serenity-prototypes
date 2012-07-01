@@ -23,10 +23,13 @@ ymax_ = fromIntegral ymax
 
 xsize :: Int
 xsize = xmax-xmin
+xsize_ :: Float
+xsize_ = fromIntegral xsize
 
 ysize :: Int
 ysize = ymax-ymin
-
+ysize_ :: Float
+ysize_ = fromIntegral ysize
 
 bottom :: Int
 bottom = 40
@@ -41,5 +44,7 @@ xbound = 59
 ybound = 59
 
 --Slices
-sliceMax :: Int
-sliceMax = 150
+slice_max :: Int
+slice_max = 150
+slice_max_ :: Float
+slice_max_ = fromIntegral slice_max
