@@ -38,14 +38,12 @@ main = do
 		size = (xmax-xmin, ymax-ymin + 2*bottom)
 
 run :: Float -> World -> IO World
-run f (world @ World {time = t, last_tick = l_tick, evolving = evolve}) = 
-	if evolve == Static
-		then return $ advance_main_time
-		else return $ tick_if_time evolve
+run time_past world = case evolve_mode world of
+	Static    -> return $ world'
+	Evolving  -> return $ if tick_due then tick_forward world' {last_tick = time world} else world'
+	Devolving -> return $ if tick_due then tick_back    world' {last_tick = time world} else world'
 	where
-	tick_if_time e = if (l_tick + 0.1) < t then advance_main_time_and_slice e else advance_main_time
-	advance_main_time_and_slice e =
-		if e == Evolving
-			then tick_forward $ (advance_main_time) {last_tick = f+t}
-			else tick_back    $ (advance_main_time) {last_tick = f+t}
-	advance_main_time = main_time_forward f world
+		world' = main_time_forward time_past world
+		tick_due = (last_tick world + 0.1) < time world
+
+

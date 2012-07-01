@@ -17,7 +17,7 @@ data World = World
 	,	slice          :: Int
 	,	time           :: Float
 	,	c_history      :: [Slice]
-	,	evolving       :: Evolving
+	,	evolve_mode    :: Evolving
 	,	last_tick      :: Float
 	,	mode           :: Mode
 	,	selected       :: [UnitID]
@@ -34,7 +34,7 @@ empty_world = World
 	,	slice          = 0
 	,	time           = 0
 	,	c_history      = []
-	,	evolving       = Static
+	,	evolve_mode    = Static
 	,	last_tick      = 0.0
 	,	mode           = ModeSelect
 	,	selected       = [1,2]

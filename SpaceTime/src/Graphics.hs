@@ -42,12 +42,12 @@ enabled_widgets =
 
 -- Handle control events
 events :: Int -> Event -> World -> IO World
-events s_max event @ (EventKey key state (Modifiers Up Up Up) (x,y)) world @ World {time=t, slice=sl, evolving = e}
-	| key == control_left  = if state == Up then return $ world { evolving = Static } else return $ world { evolving = Devolving }
-	| key == control_right = if state == Up then return $ world { evolving = Static } else return $ world { evolving = Evolving  }
-	| key == control_evolve && state == Up = return $ world { evolving = if e == Evolving then Static else Evolving }
+events s_max event @ (EventKey key state (Modifiers Up Up Up) (x,y)) world @ World {time=t, slice=sl, evolve_mode  = e}
+	| key == control_left  = if state == Up then return $ world { evolve_mode  = Static } else return $ world { evolve_mode  = Devolving  }
+	| key == control_right = if state == Up then return $ world { evolve_mode  = Static } else return $ world { evolve_mode  = Evolving  }
+	| key == control_evolve && state == Up = return $ world { evolve_mode  = if e == Evolving then Static else Evolving }
 	| key == (MouseButton LeftButton) = mouse_event event world
-events s_max event @ (EventMotion (x, y)) world @ World {time=t, slice=sl, evolving = e} =
+events s_max event @ (EventMotion (x, y)) world @ World {time=t, slice=sl, evolve_mode  = e} =
 	mouse_event event world' where
 		world' = world {mouse_coord = (x,y)}
 events _ _ x = return x
