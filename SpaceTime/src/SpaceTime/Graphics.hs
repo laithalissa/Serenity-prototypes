@@ -101,7 +101,7 @@ picture_orders :: World -> Time -> Picture
 picture_orders world ti = 
 	Translate xmin_ ymin_ $ 
 	Pictures $ map 
-	(\order -> Translate (trans $ fst (orders_loc order)) (trans $ snd (orders_loc order)) $ Color (orders_color order) $ (Circle 10) ) 
+	(\order -> Translate (trans $ fst (orders_loc order)) (trans $ snd (orders_loc order)) $ Color (orders_color order) $ crosshair ) 
 	list_orders where
 		list_orders = concatMap (\unit -> (get_orders unit)) selected_units
 		get_orders unit = case (orders unit) T.! ti of Just a -> [a]; otherwise -> []
@@ -116,6 +116,7 @@ picture_orders world ti =
 			Goto loc       -> loc
 			Attack loc     -> loc
 			AttackGoto loc -> loc
+		crosshair = Scale 1.2 1.2 $ Pictures [Circle (s/2), Line [(0, -s), (0, s)], Line [(s, 0), (-s,0)]]
 
 picture_terrain :: Terrain -> Picture
 picture_terrain terr = 
