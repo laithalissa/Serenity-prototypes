@@ -18,17 +18,17 @@ picture world =
 	return $ 
 	Translate (0.0) ((fromIntegral bottom)) $ 
 	Pictures 
-	[	pictureGridEmpties
-	,	pictureTerrain (terrain world)
-	,	pictureGrid (gridOfSlice ((c_history world) !! (slice world))) world
-	,	pictureWidgets world
-	,	pictureMouseLoc (mouse_coord world)
-	,	pictureOrders world (slice world)
+	[	picture_grid_empties
+	,	picture_terrain (terrain world)
+	,	picture_grid (gridOfSlice ((c_history world) !! (slice world))) world
+	,	picture_widgets world
+	,	picture_mouse_coords (mouse_coord world)
+	,	picture_orders world (slice world)
 	]
 	where
 	gridOfSlice (Slice grid _) = grid
 
-pictureWidgets world = Pictures $ map (\widget -> widget_picture widget $ world) (world_widgets world)
+picture_widgets world = Pictures $ map (\widget -> widget_picture widget $ world) (world_widgets world)
 
 enabled_widgets :: [Widget]
 enabled_widgets = 
@@ -80,8 +80,8 @@ events s_max event @ (EventMotion (x, y)) world @ World {time=t, slice=sl, evolv
 events _ _ x = return x
 
 -- Main Graphics
-pictureGridEmpties :: Picture
-pictureGridEmpties = 
+picture_grid_empties :: Picture
+picture_grid_empties = 
 	Translate (fromIntegral xmin) (fromIntegral ymin) $ 
 	Pictures 
 	[	Translate 
@@ -91,8 +91,8 @@ pictureGridEmpties =
 		| x<-[1..xbound], y<-[1..ybound]
 	]
 
-pictureGrid :: Grid -> World -> Picture
-pictureGrid grid (world @ World {slice = ti}) = 
+picture_grid :: Grid -> World -> Picture
+picture_grid grid (world @ World {slice = ti}) = 
 	Translate (fromIntegral xmin) (fromIntegral ymin) $ 
 	Pictures $ 
 	map drawUnit grid where
@@ -100,10 +100,10 @@ pictureGrid grid (world @ World {slice = ti}) =
 			Translate 
 			(fromIntegral (x-1) * s) 
 			(fromIntegral (y-1) * s) 
-			(drawOneUnit world unit ti)
+			(picture_unit world unit ti)
 
-drawOneUnit :: World -> Unit -> Time -> Picture
-drawOneUnit world unit ti = 
+picture_unit :: World -> Unit -> Time -> Picture
+picture_unit world unit ti = 
 	Pictures $ 
 	(if (unit_id unit) `elem` (selected world) then [picture_select] else []) ++
 	[	Color orders_color square
@@ -124,8 +124,8 @@ drawOneUnit world unit ti =
 		,	Color black square'
 		]
 
-pictureOrders :: World -> Time -> Picture
-pictureOrders world ti = 
+picture_orders :: World -> Time -> Picture
+picture_orders world ti = 
 	Translate xmin_ ymin_ $ 
 	Pictures $ map 
 	(\order -> Translate (trans $ fst (orders_loc order)) (trans $ snd (orders_loc order)) $ Color (orders_color order) $ (Circle 10) ) 
@@ -144,8 +144,8 @@ pictureOrders world ti =
 			Attack loc     -> loc
 			AttackGoto loc -> loc
 
-pictureTerrain :: Terrain -> Picture
-pictureTerrain terr = 
+picture_terrain :: Terrain -> Picture
+picture_terrain terr = 
 	Translate (fromIntegral xmin) (fromIntegral ymin) $ 
 	Pictures $ concat 
 	[	if (terr ! x ! y) == False then [Translate 
@@ -170,7 +170,7 @@ square_of_size x = Polygon [(0,0),(0,x),(x,x),(x,0)]
 
 -- GUI
 
-pictureMouseLoc (x, y) = 
+picture_mouse_coords (x, y) = 
 	Translate (fromIntegral xmin + 3) (fromIntegral ymin - 53 ) $ 
 	Pictures
 	[	Color white $ Scale 0.1 0.1 $ Text (show x ++ ", " ++ (show y))
@@ -180,24 +180,24 @@ pictureMouseLoc (x, y) =
 timeline_widget :: Widget
 timeline_widget = Widget
 	{	bottom_left     = (slider_coord 0           , (ymin_ + bottom_ / 2 - 2*s) - 40 )
-	,	top_right       = (slider_coord (sliceMax-1), (ymin_ + bottom_ / 2 - s  ) - 40 )
+	,	top_right       = (slider_coord (slice_max-1), (ymin_ + bottom_ / 2 - s  ) - 40 )
 	,	mouse_up_cb     = \_ world -> return world
-	,	mouse_down_cb   = \(EventKey _ _ _ (x,y)) world -> return world {slice = toBounds (floor $ slider_position x) (0, sliceMax-1)}
-	,	mouse_motion_cb = \(EventMotion (x, y))   world -> return world {slice = toBounds (floor $ slider_position x) (0, sliceMax-1)}
-	,	widget_picture  = \world -> pictureTimeline world
+	,	mouse_down_cb   = \(EventKey _ _ _ (x,y)) world -> return world {slice = toBounds (floor $ slider_position x) (0, slice_max-1)}
+	,	mouse_motion_cb = \(EventMotion (x, y))   world -> return world {slice = toBounds (floor $ slider_position x) (0, slice_max-1)}
+	,	widget_picture  = \world -> picture_timeline world
 	} where
-		slider_coord x = (*) (fromIntegral sliceMax / (fromIntegral (xsize))) $ (-(s * (fromIntegral sliceMax)/2)) + (fromIntegral (x) * s)
-		slider_position x = (/) ((x * (fromIntegral (xsize) / (fromIntegral sliceMax)) + (s * (fromIntegral sliceMax)/2)) ) s
+		slider_coord x = (*) (slice_max_ / xsize_) $ (-(s * (slice_max_)/2)) + (fromIntegral (x) * s)
+		slider_position x = (/) ((x * (xsize_ / (slice_max_)) + (s * (slice_max_)/2)) ) s
 
-pictureTimeline :: World -> Picture
-pictureTimeline world = 
-	Scale (fromIntegral sliceMax / (fromIntegral (xsize))) 1.0 $ 
-	Translate (-(s * (fromIntegral sliceMax)/2)) (fromIntegral (ymin-bottom)) $ 
+picture_timeline :: World -> Picture
+picture_timeline world = 
+	Scale (slice_max_ / xsize_) 1.0 $ 
+	Translate (-(s * slice_max_/2)) (ymin_-bottom_) $ 
 	Pictures 
 	[ 	Translate 
 			(fromIntegral (i) * s) 0
 			(Color (if (slice world) == i then red else (greyN 0.7)) square')
-		| i<-[0..(sliceMax-1)]
+		| i<-[0..(slice_max-1)]
 	]
 
 -- Button Widgets

@@ -46,10 +46,10 @@ empty_world = World
 data Evolving = Evolving | Devolving | Static deriving (Eq)
 
 tick_forward :: World -> World
-tick_forward world @ World {slice = i} = world {slice = mod (i+1) sliceMax}
+tick_forward world @ World {slice = i} = world {slice = mod (i+1) slice_max}
 
 tick_back :: World -> World
-tick_back world @ World {slice = i} = world {slice = mod (i-1) sliceMax}
+tick_back world @ World {slice = i} = world {slice = mod (i-1) slice_max}
 
 main_time_forward :: Float -> World -> World
 main_time_forward f (world @ World {time = t}) = world {time = t+f}
