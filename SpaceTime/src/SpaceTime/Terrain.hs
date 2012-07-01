@@ -1,11 +1,11 @@
-module Terrain (
+module SpaceTime.Terrain (
 	initial_terrain
 ) where
 
 import Data.Array
 
-import Configuration
-import World
+import SpaceTime.Configuration
+import SpaceTime.World
 
 initial_terrain :: Terrain
 initial_terrain = read_terrain terrain_string

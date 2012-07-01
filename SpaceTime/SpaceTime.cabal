@@ -22,5 +22,11 @@ Test-Suite TestSpaceTime
     main-is:        Main.hs
     build-depends:  
         base, 
-        QuickCheck
-    hs-source-dirs: testsuite
+        QuickCheck,
+        containers,
+        parsec,
+        deepseq,
+        array,
+        astar,
+        gloss == 1.7.*
+    hs-source-dirs: testsuite, src

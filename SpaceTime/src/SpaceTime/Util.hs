@@ -1,4 +1,4 @@
-module Util where
+module SpaceTime.Util where
 
 minimumWith :: Ord b => (a -> b) -> [a] -> a
 minimumWith _ [] =  error "Empty List: minimumWith"

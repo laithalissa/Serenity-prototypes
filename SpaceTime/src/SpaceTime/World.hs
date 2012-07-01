@@ -1,4 +1,4 @@
-module World where
+module SpaceTime.World where
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
@@ -7,9 +7,9 @@ import Data.Map (Map)
 import qualified Data.Map as Map
 import Control.DeepSeq
 
-import Configuration
-import Unit
-import Widget
+import SpaceTime.Configuration
+import SpaceTime.Unit
+import SpaceTime.Widget
 
 data World = World 
 	{	units          :: Map Int Unit

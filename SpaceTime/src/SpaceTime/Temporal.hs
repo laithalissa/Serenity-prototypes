@@ -1,4 +1,4 @@
-module Temporal (
+module SpaceTime.Temporal (
 	Temporal
 ,	empty
 ,	(!)

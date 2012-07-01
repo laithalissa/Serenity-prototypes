@@ -8,12 +8,12 @@ import Graphics.Gloss.Interface.IO.Game
 import Control.DeepSeq
 import qualified Data.Map as Map
 
-import World
-import Unit
-import History
-import Configuration
-import Graphics
-import Terrain
+import SpaceTime.World
+import SpaceTime.Unit
+import SpaceTime.History
+import SpaceTime.Configuration
+import SpaceTime.Graphics
+import SpaceTime.Terrain
 
 initial_units = Map.fromList
 	[	(1, basic_unit 1 1 (10,50))

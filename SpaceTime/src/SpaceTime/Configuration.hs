@@ -1,4 +1,4 @@
-module Configuration where
+module SpaceTime.Configuration where
 
 -- Dimensions
 xmin :: Int
