@@ -44,7 +44,9 @@ act terr grid ti unit = (new_unit, Nothing) where
 		ActionPathfind dest -> case p of
 			Just a -> tail a
 			Nothing -> []
-		ActionMove dir -> tail $ planned_path unit
+		ActionMove dir -> case planned_path unit of --tail $ planned_path unit
+			_:x -> x
+			_ -> []
 		ActionNothing -> planned_path unit
 		--ActionAttack _
 	p = case new_dest of 
