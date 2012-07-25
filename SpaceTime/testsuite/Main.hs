@@ -1,7 +1,14 @@
 module Main where
 
-import Test.QuickCheck (quickCheck)
-import Text.Printf
+import Data.Monoid
+
+import Test.Framework (defaultMainWithArgs, testGroup)
+import Test.Framework.Runners.Options
+import Test.Framework.Options
+import Test.Framework.Providers.HUnit
+import Test.Framework.Providers.QuickCheck2 (testProperty)
+
+import Test.QuickCheck
 
 import Test.SpaceTime.World
 import Test.SpaceTime.Unit
@@ -13,12 +20,20 @@ import Test.SpaceTime.Temporal
 import Test.SpaceTime.Terrain
 import Test.SpaceTime.Util
 
-prop_reverseReverse :: [Char] -> Bool
-prop_reverseReverse s = (reverse . reverse) s == s
+main = defaultMainWithArgs tests htf_args
 
-main  = mapM_ (\(s,a) -> printf "%-25s: " s >> a) tests
+htf_args = 
+	[	"--maximum-generated-tests=5000"
+	,	"--maximum-unsuitable-generated-tests=3000"
+	]
 
 tests = 
-	[	("reverse.reverse/id", quickCheck prop_reverseReverse)
-	,	("reverse.reverse/id", quickCheck prop_reverseReverse)
+	[	testProperty "reverse.reverse == id"     prop_reverse_reverse
+	,	testProperty "minimum.invert == maximum" prop_min_invert_max
 	]
+
+prop_reverse_reverse :: [Char] -> Bool
+prop_reverse_reverse s = (reverse . reverse) s == s
+
+prop_min_invert_max :: [Int] -> Property
+prop_min_invert_max s = s/=[] ==> minimum (map (\x -> -x) s) == -(maximum s)
