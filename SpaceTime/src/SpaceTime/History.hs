@@ -67,7 +67,9 @@ decide_action terr grid ti unit =
 			then ActionNothing 
 			else case (current_dest unit) of
 				Just c_dest -> if c_dest == loc 
-					then ActionMove $ get_direction (current_loc unit) ((planned_path unit)!!0)
+					then if (planned_path unit == []) 
+						then ActionNothing 
+						else ActionMove $ get_direction (current_loc unit) ((planned_path unit)!!0) 
 					else ActionPathfind loc
 				Nothing -> ActionPathfind loc
 		--Just (Attack loc)
